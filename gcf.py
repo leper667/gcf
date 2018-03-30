@@ -41,8 +41,7 @@ class Proj:
         #Attack listbox
         alist = ['Synflood']
         self.attkList = Listbox(master)
-        for attk in alist:
-            self.attkList.insert(END, attk)
+        self.attkList.insert(END, *alist)
         Label(master, text='Attack:').grid(row=0, column=0, sticky=W)
         self.attkList.grid(row=1, column=0, rowspan=4)
 
@@ -109,6 +108,7 @@ class Proj:
         self.hideConsole.grid(row=6, column=0)
 
     #Toggle the presence of the console
+    #TODO not static
     def toggleConsole(self, master):
         width, height = master.winfo_width(), master.winfo_height()
         conHeight = self.console.winfo_height()
@@ -173,16 +173,15 @@ class Proj:
             dstIp = self.dstIpbox.get()
             url = self.urlbox.get()
             dstport = self.dstportbox.get()
-            #To the python gods and goddesses,
-            #I apologize for my horrid regex length.
-            #May you have mercy on my soul...
+
+            ipreg = '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
             urlIp = socket.gethostbyname(url)
             urlValid = None
-            srcValid = re.match('^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', srcIp)
-            dstValid = re.match('^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', dstIp)
+            srcValid = re.match(ipreg, srcIp)
+            dstValid = re.match(ipreg, dstIp)
             dstportValid = re.match('^[0-9]*$', dstport)
             if urlIp is not None:
-                urlValid = re.match('^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', urlIp)
+                urlValid = re.match(ipreg, urlIp)
             if dstportValid is not None and dstport is not None and dstport != '':
                 dstportNum = int(dstport, 0)
             #actual validitty checks
